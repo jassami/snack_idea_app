@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snack Suggestions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container-fluid pb-5" style="background-color: rgb(227, 242, 243)">
+        <div class="row mb-4">
+            <div class="col">
+            <h2>New Snack Ideas</h2>
+            </div>
+            <div class="col">
+            <p>Logged in as <a href="/snacks/users/{{user.id}}">{{request.session.email}}</a></p>
+            </div>
+            <div class="col">
+                <a href="/">Log out</a>
+            </div>
+        </div>
+        <div class="mb-5">
+            <h4>Post a new idea:</h4>
+            {% if request.session.send == "create" %}
+                {% for message in messages %}
+                    <p style="color: red;">{{message}}</p>
+                {% endfor %}
+            {% endif %}
+            <form action="/snacks/create" method="POST">
+                {% csrf_token %}
+                <label for="">Snack title:</label>
+                <input type="text" name="title"><br>
+                <textarea name="desc" id="" cols="90" rows="2">Write your idea here!</textarea><br>
+                <input type="submit" value="Post Idea">
+            </form>
+        </div>
+        <h2>Other Ideas</h2>
+        {% for snack in snacks %}
+            <div>
+                <div class="row ml-2">
+                <p class="mr-5"><a href="/snacks/{{snack.id}}">{{snack.title}}</a></p><p class="mr-2">by: <a href="users/{{snack.creator.id}}">{{snack.creator.first_name}} {{snack.creator.last_name}}</a></p> 
+                {% if user.id == snack.creator.id %}
+                <p><a style="color: brown;" href="/snacks/delete/{{snack.id}}">Delete snack</a>
+                {% endif %}</p>
+                </div>
+                <p>({{snack.liked_by.all.count}} likes, {{snack.disliked_by.all.count}} dislikes)</p>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{snack.title}}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container-fluid pb-5" style="background-color: rgb(227, 242, 243)">
+        <div class="row mb-4">
+            <div class="col">
+            <h2>{{snack.title}}</h2>
+            </div>
+            <div class="col">
+                <p>Logged in as <a href="/snacks/users/{{user.id}}">{{request.session.email}}</a></p>
+            </div>
+            <div class="col">
+                <a href="/">Log out</a>
+            </div>
+        </div>
+        <div>
+            <p>Description:</p>
+            <p>{{snack.desc}}</p>
+            <div class="row">
+            {% if user.id == snack.creator.id %}
+            <form class="mr-5 ml-4" action="/snacks/delete/{{snack.id}}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Delete this">
+            </form>
+            {% endif %}
+            {% if user not in snack.liked_by.all %}
+            <form action="/snacks/like/{{snack.id}}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="Like snack">
+            </form>
+            {% endif %}
+            {% if user not in snack.disliked_by.all %}
+            <form action="/snacks/dislike/{{snack.id}}" method="POST">
+                {% csrf_token %}
+                <input type="submit" value="Dislike snack">
+            </form>
+            {% endif %}
+            </div>
+            <div class="row mt-5">
+                <div class="col">
+                    <h3>Users who like:</h3>
+                    {% for user in snack.liked_by.all %}
+                    <p><a href="/snacks/users/{{user.id}}"> {{user.first_name}} {{user.last_name}}</a></p>
+                    {% endfor %}
+                </div>
+                <div class="col">
+                    <h3>Users who dislike:</h3>
+                    {% for user in snack.disliked_by.all %}
+                    <p><a href="/snacks/users/{{user.id}}"> {{user.first_name}} {{user.last_name}}</a></p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            
+    </div>
+    
+</body>
+</html>
+
+
+
+
+
+
+<!-- <a href="/snacks/dislike/{{snack.id}}">Dislike</a> -->
